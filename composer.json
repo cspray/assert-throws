@@ -1,0 +1,17 @@
+{
+  "require": {
+    "php": "^8.2",
+    "phpunit/phpunit": "^10.0 | ^11.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Cspray\\AssertThrows\\": "src"
+    },
+    "files": ["src/functions.php"]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Cspray\\AssertThrows\\Test\\": "tests"
+    }
+  }
+}
