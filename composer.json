@@ -1,4 +1,14 @@
 {
+  "name": "cspray/assert-throws",
+  "description": "Assertions for PHPUnit when testing code that throws complex exceptions.",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Charles Sprayberry",
+      "role": "Maintainer",
+      "homepage": "https://cspray.io"
+    }
+  ],
   "require": {
     "php": "^8.2",
     "phpunit/phpunit": "^10.0 | ^11.0"
