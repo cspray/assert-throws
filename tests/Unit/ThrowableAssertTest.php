@@ -84,7 +84,7 @@ final class ThrowableAssertTest extends TestCase {
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage(
             "Expected callable to throw an exception of type \"RuntimeException\", but \"BadMethodCallException\" was thrown. Message: badmethod message\n"
-            . 'Failed asserting that an object is an instance of class RuntimeException.'
+            . 'Failed asserting that an instance of class BadMethodCallException is an instance of class RuntimeException.'
         );
 
         ThrowableAssert::assertThrowsExceptionTypeWithMessage(
