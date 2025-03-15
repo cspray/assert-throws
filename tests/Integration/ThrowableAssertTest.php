@@ -3,7 +3,9 @@
 namespace Cspray\AssertThrows\Test\Integration;
 
 use Cspray\AssertThrows\ThrowableAssert;
+use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(ThrowableAssert::class)]
 class ThrowableAssertTest extends IntegrationTestCase {
 
     protected function invokeAssertThrows(callable $throwingCallable) : \Throwable {
