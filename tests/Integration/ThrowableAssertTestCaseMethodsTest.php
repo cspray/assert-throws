@@ -2,8 +2,13 @@
 
 namespace Cspray\AssertThrows\Test\Integration;
 
+use Cspray\AssertThrows\ThrowableAssert;
 use Cspray\AssertThrows\ThrowableAssertTestCaseMethods;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 
+#[CoversClass(ThrowableAssertTestCaseMethods::class)]
+#[UsesClass(ThrowableAssert::class)]
 class ThrowableAssertTestCaseMethodsTest extends IntegrationTestCase {
 
     use ThrowableAssertTestCaseMethods;

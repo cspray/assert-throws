@@ -7,6 +7,7 @@ use Throwable;
 
 final class ThrowableAssert {
 
+    /** @codeCoverageIgnore  */
     private function __construct() {}
 
     public static function assertThrows(callable $throwingCallable) : Throwable {
@@ -18,7 +19,7 @@ final class ThrowableAssert {
         } finally {
             Assert::assertNotNull(
                 $exception,
-                'Expected callable to throw an exception but none was thrown.'
+                'Expected callable to throw an exception, but none was thrown.'
             );
 
             return $exception;
@@ -43,12 +44,17 @@ final class ThrowableAssert {
         } finally {
             Assert::assertNotNull(
                 $exception,
-                sprintf('Expected callable to throw an exception of type "%s" but none was thrown.', $exceptionType),
+                sprintf('Expected callable to throw an exception of type "%s", but none was thrown.', $exceptionType),
             );
             Assert::assertInstanceOf(
                 $exceptionType,
                 $exception,
-                sprintf('Expected callable to throw an exception of type "%s" but "%s" was thrown.', $exceptionType, $exception::class)
+                sprintf(
+                    'Expected callable to throw an exception of type "%s", but "%s" was thrown. Message: %s',
+                    $exceptionType,
+                    $exception::class,
+                    $exception->getMessage()
+                )
             );
 
             return $exception;
@@ -73,7 +79,7 @@ final class ThrowableAssert {
             $message,
             $throwable->getMessage(),
             sprintf(
-                'Expected exception thrown from callable to have message "%s" but it has "%s".',
+                'Expected exception thrown from callable to have message "%s", but it has "%s".',
                 $message,
                 $throwable->getMessage()
             )
