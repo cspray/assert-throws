@@ -3,10 +3,12 @@
 namespace Cspray\AssertThrows\Test\Integration;
 
 use Cspray\AssertThrows\ThrowableAssert;
-use PHPUnit\Framework\Attributes\UsesClass;
+use Cspray\AssertThrows\ThrowableAssertTestCaseMethods;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-#[UsesClass(ThrowableAssert::class)]
+#[CoversClass(ThrowableAssert::class)]
+#[CoversClass(ThrowableAssertTestCaseMethods::class)]
 abstract class IntegrationTestCase extends TestCase {
 
     public function testAssertThrowsWhenCallbackThrowsAnyException() : void {

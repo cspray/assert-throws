@@ -111,6 +111,8 @@ final class ThrowableAssertTest extends TestCase {
     public function testAssertThrowsExceptionTypeWithMessageCorrectExceptionTypeHasAppropriateAssertCountAndReturnsException() : void {
         Assert::resetCount();
 
+        $this->expectException();
+
         $expected = new RuntimeException('My runtime message');
         $actual = ThrowableAssert::assertThrowsExceptionTypeWithMessage(
             static fn() => throw $expected,
