@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="6.20.4@e53db692e6600cf729c88190b892bcf96e1c550e">
+  <file src="src/ThrowableAssert.php">
+    <InternalClass>
+      <code><![CDATA[new ExceptionConstraint($expectedException)]]></code>
+      <code><![CDATA[new ExceptionMessageIsOrContains($expectedMessage)]]></code>
+      <code><![CDATA[new ExceptionMessageMatchesRegularExpression($expectedMessageRegex)]]></code>
+    </InternalClass>
+    <InternalMethod>
+      <code><![CDATA[new ExceptionConstraint($expectedException)]]></code>
+      <code><![CDATA[new ExceptionMessageIsOrContains($expectedMessage)]]></code>
+      <code><![CDATA[new ExceptionMessageMatchesRegularExpression($expectedMessageRegex)]]></code>
+    </InternalMethod>
+  </file>
+</files>
