@@ -10,8 +10,10 @@ use Throwable;
 
 final class ThrowableAssert {
 
-    /** @codeCoverageIgnore  */
-    /** @psalm-suppress UnusedConstructor */
+    /**
+     * @psalm-suppress UnusedConstructor
+     * @codeCoverageIgnore
+     */
     private function __construct() {}
 
     /**
