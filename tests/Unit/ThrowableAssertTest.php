@@ -14,7 +14,9 @@ use RuntimeException;
 final class ThrowableAssertTest extends TestCase {
     public function testAssertThrowsCallableDoesNotThrowFailsTestAndDoesNotAddToAssertionCount() : void {
         $this->expectException(ExpectationFailedException::class);
-        $this->expectExceptionMessage('Expected callable to throw an exception, but none was thrown.');
+        $this->expectExceptionMessage(
+            'Failed asserting that exception of type "Throwable" is thrown.',
+        );
 
         ThrowableAssert::assertThrows(static function() {});
     }
@@ -32,24 +34,25 @@ final class ThrowableAssertTest extends TestCase {
     public function testAssertThrowsExceptionTypeWithNoExceptionThrownHasCorrectAssertionFailure() : void {
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage(
-            "Expected callable to throw an exception of type \"RuntimeException\", but none was thrown.\n"
-            . "Failed asserting that null is not null."
+            'Failed asserting that exception of type "RuntimeException" is thrown.',
         );
 
 
         ThrowableAssert::assertThrowsExceptionType(
+            RuntimeException::class,
             static function() {},
-            RuntimeException::class
         );
     }
 
     public function testAssertThrowsExceptionTypeWithWrongExceptionTypeThrownHasCorrectAssertionFailure() : void {
         $this->expectException(ExpectationFailedException::class);
-        $this->expectExceptionMessage('Expected callable to throw an exception of type "RuntimeException", but "BadMethodCallException" was thrown.');
+        $this->expectExceptionMessage(
+            'Failed asserting that exception of type "BadMethodCallException" matches expected exception "RuntimeException". Message was: ""'
+        );
 
         ThrowableAssert::assertThrowsExceptionType(
+            RuntimeException::class,
             static fn () => throw new BadMethodCallException(),
-            RuntimeException::class
         );
     }
 
@@ -58,53 +61,50 @@ final class ThrowableAssertTest extends TestCase {
 
         $expected = new RuntimeException();
         $actual = ThrowableAssert::assertThrowsExceptionType(
+            RuntimeException::class,
             static fn() => throw $expected,
-            RuntimeException::class
         );
 
-        self::assertSame(2, Assert::getCount());
+        self::assertSame(1, Assert::getCount());
         self::assertSame($expected, $actual);
     }
 
     public function testAssertThrowsExceptionTypeWithMessageWithNoExceptionCallableDoesNotThrowHasAssertionFailedError() : void {
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage(
-            "Expected callable to throw an exception of type \"RuntimeException\", but none was thrown.\n"
-            . 'Failed asserting that null is not null.'
+            'Failed asserting that exception of type "RuntimeException" is thrown.'
         );
 
-        ThrowableAssert::assertThrowsExceptionTypeWithMessage(
-            static function () {},
+        ThrowableAssert::assertThrowsExceptionTypeWithMessageIsOrContains(
             RuntimeException::class,
-            'My exception message.'
+            'My exception message.',
+            static function () {},
         );
     }
 
     public function testAssertThrowsExceptionTypeWithMessageWrongExceptionTypeThrownHasCorrectAssertionFailure() : void {
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage(
-            "Expected callable to throw an exception of type \"RuntimeException\", but \"BadMethodCallException\" was thrown. Message: badmethod message\n"
-            . 'Failed asserting that an instance of class BadMethodCallException is an instance of class RuntimeException.'
+            'Failed asserting that exception of type "BadMethodCallException" matches expected exception "RuntimeException". Message was: "badmethod message"'
         );
 
-        ThrowableAssert::assertThrowsExceptionTypeWithMessage(
-            static fn () => throw new BadMethodCallException('badmethod message'),
+        ThrowableAssert::assertThrowsExceptionTypeWithMessageIsOrContains(
             RuntimeException::class,
-            'My exception message.'
+            'My exception message.',
+            static fn () => throw new BadMethodCallException('badmethod message'),
         );
     }
 
     public function testAssertThrowsExceptionTypeWithMessageIncorrectMessageInThrownExceptionHasCorrectAssertionFailure() : void {
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage(
-            "Expected exception thrown from callable to have message \"not anything\", but it has \"anything\".\n"
-            . 'Failed asserting that two strings are identical.'
+            'Failed asserting that exception message \'anything\' contains \'not anything\'.'
         );
 
-        ThrowableAssert::assertThrowsExceptionTypeWithMessage(
-            static fn () => throw new RuntimeException('anything'),
+        ThrowableAssert::assertThrowsExceptionTypeWithMessageIsOrContains(
             RuntimeException::class,
-            'not anything'
+            'not anything',
+            static fn () => throw new RuntimeException('anything'),
         );
     }
 
@@ -112,13 +112,40 @@ final class ThrowableAssertTest extends TestCase {
         Assert::resetCount();
 
         $expected = new RuntimeException('My runtime message');
-        $actual = ThrowableAssert::assertThrowsExceptionTypeWithMessage(
-            static fn() => throw $expected,
+        $actual = ThrowableAssert::assertThrowsExceptionTypeWithMessageIsOrContains(
             RuntimeException::class,
-            'My runtime message'
+            'My runtime message',
+            static fn() => throw $expected,
         );
 
-        self::assertSame(3, Assert::getCount());
+        self::assertSame(2, Assert::getCount());
+        self::assertSame($expected, $actual);
+    }
+
+    public function testAssertThrowsExceptionTypeWithMessageNotMatchingRegexHasCorrectAssertionFailure() : void {
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage(
+            'Failed asserting that exception message \'Ellie\' matches \'/^Mack$/\'.'
+        );
+
+        ThrowableAssert::assertThrowsExceptionTypeWithMessageMatchesRegex(
+            RuntimeException::class,
+            '/^Mack$/',
+            static fn() => throw new RuntimeException('Ellie'),
+        );
+    }
+
+    public function testAssertThrowsExceptionWithMessageMatchesHasAppropriateAssertCountAndReturnsException() : void {
+        Assert::resetCount();
+
+        $expected = new RuntimeException('Mack');
+        $actual = ThrowableAssert::assertThrowsExceptionTypeWithMessageMatchesRegex(
+            RuntimeException::class,
+            '/^Mack$/',
+            static fn() => throw $expected,
+        );
+
+        self::assertSame(2, Assert::getCount());
         self::assertSame($expected, $actual);
     }
 }

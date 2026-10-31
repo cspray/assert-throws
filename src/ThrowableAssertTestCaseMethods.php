@@ -5,28 +5,60 @@ namespace Cspray\AssertThrows;
 use Throwable;
 
 trait ThrowableAssertTestCaseMethods {
-    public static function assertThrows(callable $throwingCallable) : Throwable {
-        return ThrowableAssert::assertThrows($throwingCallable);
+
+    /**
+     * {@see ThrowableAssert::assertThrows()}
+     *
+     * @param callable $actual
+     * @return Throwable
+     */
+    public static function assertThrows(callable $actual) : Throwable {
+        return ThrowableAssert::assertThrows($actual);
     }
 
     /**
+     * {@see ThrowableAssert::assertThrowsExceptionType()}
+     *
      * @template ThrownType of Throwable
-     * @param callable $throwingCallable
-     * @param class-string<ThrownType> $exceptionType
+     * @param class-string<ThrownType> $expectedException
+     * @param callable $actual
      * @return ThrownType
      */
-    public static function assertThrowsExceptionType(callable $throwingCallable, string $exceptionType) : Throwable {
-        return ThrowableAssert::assertThrowsExceptionType($throwingCallable, $exceptionType);
+    public static function assertThrowsExceptionType(string $expectedException, callable $actual) : Throwable {
+        return ThrowableAssert::assertThrowsExceptionType($expectedException, $actual);
     }
 
     /**
+     * {@see ThrowableAssert::assertThrowsExceptionTypeWithMessage()}
+     *
      * @template ThrownType of Throwable
-     * @param callable $throwingCallable
-     * @param class-string<ThrownType> $exceptionType
-     * @param string $message
+     * @param class-string<ThrownType> $expectedException
+     * @param string $expectedMessage
+     * @param callable $actual
      * @return ThrownType
      */
-    public static function assertThrowsExceptionTypeWithMessage(callable $throwingCallable, string $exceptionType, string $message) : Throwable {
-        return ThrowableAssert::assertThrowsExceptionTypeWithMessage($throwingCallable, $exceptionType, $message);
+    public static function assertThrowsExceptionTypeWithMessageIsOrContains(
+        string $expectedException,
+        string $expectedMessage,
+        callable $actual,
+    ) : Throwable {
+        return ThrowableAssert::assertThrowsExceptionTypeWithMessageIsOrContains($expectedException, $expectedMessage, $actual);
+    }
+
+    /**
+     * {@see ThrowableAssert::assertThrowsExceptionTypeWithMessageMatchesRegex()}
+     *
+     * @template ThrownType of Throwable
+     * @param class-string<ThrownType> $expectedException
+     * @param non-empty-string $expectedMessageRegex
+     * @param callable $actual
+     * @return ThrownType
+     */
+    public static function assertThrowsExceptionTypeWithMessageMatchesRegex(
+        string $expectedException,
+        string $expectedMessageRegex,
+        callable $actual,
+    ) : Throwable {
+        return ThrowableAssert::assertThrowsExceptionTypeWithMessageMatchesRegex($expectedException, $expectedMessageRegex, $actual);
     }
 }

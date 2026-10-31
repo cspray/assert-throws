@@ -4,24 +4,42 @@ namespace Cspray\AssertThrows\Test\Integration;
 
 use Cspray\AssertThrows\ThrowableAssert;
 use Cspray\AssertThrows\ThrowableAssertTestCaseMethods;
-use PHPUnit\Framework\Attributes\CoversClass;
+use Override;
+use PHPUnit\Framework\Attributes\CoversTrait;
 use PHPUnit\Framework\Attributes\UsesClass;
+use Throwable;
 
-#[CoversClass(ThrowableAssertTestCaseMethods::class)]
+#[CoversTrait(ThrowableAssertTestCaseMethods::class)]
 #[UsesClass(ThrowableAssert::class)]
 class ThrowableAssertTestCaseMethodsTest extends IntegrationTestCase {
 
     use ThrowableAssertTestCaseMethods;
 
+    #[Override]
     protected function invokeAssertThrows(callable $throwingCallable) : \Throwable {
         return self::assertThrows($throwingCallable);
     }
 
-    protected function invokeAssertThrowsExceptionType(callable $throwingCallable, string $exceptionType) : \Throwable {
-        return self::assertThrowsExceptionType($throwingCallable, $exceptionType);
+    #[Override]
+    protected function invokeAssertThrowsExceptionType(string $exceptionType, callable $throwingCallable) : \Throwable {
+        return self::assertThrowsExceptionType($exceptionType, $throwingCallable);
     }
 
-    protected function invokeAssertThrowsExceptionTypeWithMessage(callable $throwingCallable, string $exceptionType, string $message) : \Throwable {
-        return self::assertThrowsExceptionTypeWithMessage($throwingCallable, $exceptionType, $message);
+    #[Override]
+    protected function invokeAssertThrowsExceptionTypeWithMessageIsOrContains(
+        string $exceptionType,
+        string $message,
+        callable $throwingCallable,
+    ) : \Throwable {
+        return self::assertThrowsExceptionTypeWithMessageIsOrContains($exceptionType, $message, $throwingCallable);
+    }
+
+    #[Override]
+    protected function invokeAssertThrowsExceptionTypeWithMessageMatchesRegex(
+        string $exceptionType,
+        string $messageRegex,
+        callable $throwingCallable,
+    ) : Throwable {
+        return self::assertThrowsExceptionTypeWithMessageMatchesRegex($exceptionType, $messageRegex, $throwingCallable);
     }
 }
