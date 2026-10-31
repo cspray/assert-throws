@@ -1,9 +1,15 @@
-# cspray/assert-throws
+# AssertThrows
 
-Provides an alternative way to test code that throws exceptions using PHPUnit 10 or 11. The primary benefit being access 
-to the thrown Exception for further inspection. This might prove useful when you need to check for details of an 
-exception that aren't available to be expected in PHPUnit. The below example acts as a Quick Start, for more details 
-check out the [Detailed Guide](#Detailed-Guide) below.
+Allows testing thrown Exceptions that contain contextual information, using [PHPUnit](https://phpunit.de). PHPUnit comes 
+out-of-the-box with several methods for testing code that throws an exception. While these work for most typical cases, 
+there are scenarios where we need to test something about the thrown Exception that is not available with PHPUnit. This
+library allows your code to still expect an Exception is thrown, but provides access to the thrown Exception so that
+further assertions can be made on the data within.
+
+**This library is not intended to replace `\PHPUnit\Framework\TestCase::expectException` and similar methods!** If you 
+aren't testing something on the Exception outside the message or code you should be using PHPUnit's built-in methods.
+
+## Quick Start
 
 ```php
 <?php declare(strict_types=1);
@@ -14,10 +20,15 @@ use PHPUnit\Framework\TestCase;
 final class MyTest extends TestCase {
     public function testExceptionPreviousInstanceOf() : void {
         $throwable = ThrowableAssert::assertThrows(
-            static fn() => throw new RuntimeException(previous: new BadMethodCallException())
+            static fn() => throw new RuntimeException(
+                previous: new BadMethodCallException(),
+            ),
         );
         
-        self::assertInstanceOf(BadMethodCallException::class, $throwable->getPrevious());
+        self::assertInstanceOf(
+            BadMethodCallException::class,
+            $throwable->getPrevious(),
+        );
     }
 }
 ```
@@ -51,14 +62,20 @@ use \Cspray\AssertThrows\ThrowableAssert;
 $throwable = ThrowableAssert::assertThrows(static fn() => throw new RuntimeException());
 
 $throwable = ThrowableAssert::assertThrowsExceptionType(
+    BadMethodCallException::class,
     static fn() => throw new BadMethodCallException(),
-    BadMethodCallException::class
 );
 
-$throwable = ThrowableAssert::assertThrowsExceptionTypeWithMessage(
-    static fn() => throw new RuntimeException('My exception message'),
+$throwable = ThrowableAssert::assertThrowsExceptionTypeWithMessageIsOrContains(
     RuntimeException::class,
-    'My exception message'
+    'My exception message',
+    static fn() => throw new RuntimeException('My exception message'),
+);
+
+$throwable = ThrowableAssert::assertThrowsExceptionTypeWithMessageMatchesRegex(
+    RuntimeException::class,
+    '/^Error message$/',
+    static fn() => throw new RuntimeException('Error message'),
 );
 ```
 
@@ -69,19 +86,26 @@ In addition to the `ThrowableAssert` class with static methods there are global 
 
 use function Cspray\AssertThrows\assertThrows;
 use function Cspray\AssertThrows\assertThrowsExceptionType;
-use function Cspray\AssertThrows\assertThrowsExceptionTypeWithMessage;
+use function Cspray\AssertThrows\assertThrowsExceptionTypeWithMessageIsOrContains;
+use function Cspray\AssertThrows\assertThrowsExceptionTypeWithMessageMatchesRegex;
 
 $throwable = assertThrows(static fn() => throw new RuntimeException());
 
 $throwable = assertThrowsExceptionType(
+    BadMethodCallException::class,
     static fn() => throw new BadMethodCallException(),
-    BadMethodCallException::class
 );
 
-$throwable = assertThrowsExceptionTypeWithMessage(
-    static fn() => throw new RuntimeException('My exception message'),
+$throwable = assertThrowsExceptionTypeWithMessageIsOrContains(
     RuntimeException::class,
-    'My exception message'
+    'My exception message',
+    static fn() => throw new RuntimeException('My exception message'),
+);
+
+$throwable = assertThrowsExceptionTypeWithMessageMatchesRegex(
+    RuntimeException::class,
+    '/^Error message$/',
+    static fn() => throw new RuntimeException('Error message'),
 );
 ```
 
@@ -102,16 +126,24 @@ class MyTestCase extends TestCase {
     
     public function testAssertThrowsExceptionType() : void {
         $throwable = self::assertThrowsExceptionType(
+            BadMethodCallException::class,
             static fn() => throw new BadMethodCallException(),
-            BadMethodCallException::class
         );
     }
     
-    public function testAssertThrowsExceptionTypeWithMessage() : void {
-        $throwable = self::assertThrowsExceptionTypeWithMessage(
-            static fn() => throw new RuntimeException('My exception message'),
+    public function testAssertThrowsExceptionTypeWithMessageIsOrContains() : void {
+        $throwable = self::assertThrowsExceptionTypeWithMessageIsOrContains(
             RuntimeException::class,
-            'My exception message'
+            'My exception message',
+            static fn() => throw new RuntimeException('My exception message'),
+        );
+    }
+    
+    public function testAssertThrowsExceptionTypeWithMessageMatchesRegex() : void {
+        $throwable = assertThrowsExceptionTypeWithMessageMatchesRegex(
+            RuntimeException::class,
+            '/^Error message$/',
+            static fn() => throw new RuntimeException('Error message'),
         );
     }
 }
@@ -119,3 +151,15 @@ class MyTestCase extends TestCase {
 
 Which method you use is a personal preference. Ultimately, all examples utilize the static methods available in the 
 `ThrowableAssert` class.
+
+## PHPUnit Version Map
+
+This library aims to support stable versions of PHPUnit. For current releases, that includes PHPUnit 12 and 13. Earlier 
+versions of this library supported PHPUnit 10 and 11; 
+
+| PHPUnit Version | Assert Throws Version | Support Status |
+| --------------- | --------------------- | -------------- |
+ | 13 | 2.x | Stable Support |
+| 12 | 1.x | Stable Support |
+| 11 | 0.2.0 | End of Life |
+| 10 | 0.2.0 | End of Life |
